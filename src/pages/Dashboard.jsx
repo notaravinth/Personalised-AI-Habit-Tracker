@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Target, Check, Minus, X, Zap, ChevronRight, ChevronLeft } from 'lucide-react';
+import DashboardNavbar from '../components/DashboardNavbar/DashboardNavbar';
 
 function Dashboard() {
   const [currentHabitIndex, setCurrentHabitIndex] = useState(0);
@@ -65,36 +66,7 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-cream">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Target className="w-6 h-6 text-teal-primary" />
-            <h1 className="text-xl font-display font-semibold text-gray-900">HabitReflect</h1>
-          </div>
-          
-          <nav className="hidden md:flex gap-8">
-            <a href="#dashboard" className="text-gray-900 font-medium border-b-2 border-teal-primary pb-1">
-              Dashboard
-            </a>
-            <a href="#analytics" className="text-gray-600 hover:text-gray-900 transition-colors">
-              Analytics
-            </a>
-            <a href="#friends" className="text-gray-600 hover:text-gray-900 transition-colors">
-              Friends
-            </a>
-            <a href="#habits" className="text-gray-600 hover:text-gray-900 transition-colors">
-              Habits
-            </a>
-            <a href="#profile" className="text-gray-600 hover:text-gray-900 transition-colors">
-              Profile
-            </a>
-          </nav>
-          
-          <div className="w-10 h-10 rounded-full bg-teal-primary flex items-center justify-center text-white font-semibold cursor-pointer hover:bg-teal-hover transition-colors">
-            A
-          </div>
-        </div>
-      </header>
+      <DashboardNavbar />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">

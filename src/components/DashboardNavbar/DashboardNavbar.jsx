@@ -1,8 +1,9 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 
 const DashboardNavbar = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { user, signOut } = useAuth()
 
   const handleSignOut = async () => {
@@ -14,6 +15,8 @@ const DashboardNavbar = () => {
     const name = user?.user_metadata?.full_name || user?.email || 'U'
     return name.charAt(0).toUpperCase()
   }
+
+  const isActive = (path) => location.pathname === path
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
@@ -33,31 +36,51 @@ const DashboardNavbar = () => {
           <div className="hidden md:flex items-center gap-8">
             <button 
               onClick={() => navigate('/dashboard')}
-              className="text-gray-900 font-medium hover:opacity-70 transition-opacity"
+              className={`font-medium transition-colors ${
+                isActive('/dashboard') 
+                  ? 'text-gray-900' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
               Dashboard
             </button>
             <button 
               onClick={() => navigate('/analytics')}
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className={`font-medium transition-colors ${
+                isActive('/analytics') 
+                  ? 'text-gray-900' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
               Analytics
             </button>
             <button 
               onClick={() => navigate('/friends')}
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className={`font-medium transition-colors ${
+                isActive('/friends') 
+                  ? 'text-gray-900' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
               Friends
             </button>
             <button 
               onClick={() => navigate('/habits')}
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className={`font-medium transition-colors ${
+                isActive('/habits') 
+                  ? 'text-gray-900' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
               Habits
             </button>
             <button 
               onClick={() => navigate('/profile')}
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className={`font-medium transition-colors ${
+                isActive('/profile') 
+                  ? 'text-gray-900' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
               Profile
             </button>
