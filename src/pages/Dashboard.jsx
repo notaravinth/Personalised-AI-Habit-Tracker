@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import { Target, Check, Minus, X, Zap, ChevronRight, ChevronLeft } from 'lucide-react';
 
 function Dashboard() {
+  const [currentHabitIndex, setCurrentHabitIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState('did-it');
   const [reflection, setReflection] = useState('');
   const [energyLevel, setEnergyLevel] = useState(64);
 
   // Mock data - will be replaced with real data from Supabase later
-  const userName = "Alex";
+  const userName = "Nika";
   const currentTime = new Date().getHours();
   
   const getGreeting = () => {
@@ -15,10 +17,37 @@ function Dashboard() {
     return "Good evening";
   };
 
-  const currentHabit = {
-    title: "Morning Meditation",
-    description: "10 minutes of mindfulness to center your thoughts and set an intention for the day ahead.",
-    icon: "🧘"
+  const todayHabits = [
+    {
+      title: "Morning Meditation",
+      description: "10 minutes of mindfulness to center your thoughts and set an intention for the day ahead.",
+    },
+    {
+      title: "Exercise",
+      description: "30 minutes of physical activity to energize your body and boost your mood.",
+    },
+    {
+      title: "Read for 20 minutes",
+      description: "Expand your knowledge and stimulate your mind with focused reading time.",
+    },
+    {
+      title: "Drink 8 glasses of water",
+      description: "Stay hydrated throughout the day to maintain energy and focus.",
+    },
+    {
+      title: "Journal before bed",
+      description: "Reflect on your day and process your thoughts through writing.",
+    }
+  ];
+
+  const currentHabit = todayHabits[currentHabitIndex];
+
+  const handlePreviousHabit = () => {
+    setCurrentHabitIndex((prev) => (prev > 0 ? prev - 1 : todayHabits.length - 1));
+  };
+
+  const handleNextHabit = () => {
+    setCurrentHabitIndex((prev) => (prev < todayHabits.length - 1 ? prev + 1 : 0));
   };
 
   const dailyProgress = {
@@ -39,7 +68,7 @@ function Dashboard() {
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🎯</span>
+            <Target className="w-6 h-6 text-teal-primary" />
             <h1 className="text-xl font-display font-semibold text-gray-900">HabitReflect</h1>
           </div>
           
@@ -47,11 +76,17 @@ function Dashboard() {
             <a href="#dashboard" className="text-gray-900 font-medium border-b-2 border-teal-primary pb-1">
               Dashboard
             </a>
+            <a href="#analytics" className="text-gray-600 hover:text-gray-900 transition-colors">
+              Analytics
+            </a>
+            <a href="#friends" className="text-gray-600 hover:text-gray-900 transition-colors">
+              Friends
+            </a>
             <a href="#habits" className="text-gray-600 hover:text-gray-900 transition-colors">
               Habits
             </a>
-            <a href="#insights" className="text-gray-600 hover:text-gray-900 transition-colors">
-              Insights
+            <a href="#profile" className="text-gray-600 hover:text-gray-900 transition-colors">
+              Profile
             </a>
           </nav>
           
@@ -75,20 +110,48 @@ function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Current Focus Card - Takes 2 columns */}
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-md p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <span className="text-sm">🎯</span>
-              <h3 className="text-xs font-semibold tracking-wider text-teal-primary uppercase">
-                Current Focus
-              </h3>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-teal-primary" />
+                <h3 className="text-xs font-semibold tracking-wider text-teal-primary uppercase">
+                  Today's Focus Habits
+                </h3>
+              </div>
+              <div className="text-xs text-gray-500 font-medium">
+                {currentHabitIndex + 1} / {todayHabits.length}
+              </div>
             </div>
             
-            <div className="mb-8">
-              <h2 className="text-3xl font-semibold text-gray-900 mb-3">
-                {currentHabit.title}
-              </h2>
-              <p className="text-gray-600 leading-relaxed">
-                {currentHabit.description}
-              </p>
+            <div className="mb-8 relative">
+              {/* Navigation Arrows */}
+              <div className="absolute -left-2 top-1/2 -translate-y-1/2 flex gap-2">
+                <button
+                  onClick={handlePreviousHabit}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
+                  aria-label="Previous habit"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex gap-2">
+                <button
+                  onClick={handleNextHabit}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
+                  aria-label="Next habit"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="px-12">
+                <h2 className="text-3xl font-semibold text-gray-900 mb-3">
+                  {currentHabit.title}
+                </h2>
+                <p className="text-gray-600 leading-relaxed">
+                  {currentHabit.description}
+                </p>
+              </div>
             </div>
 
             {/* Check-in Options */}
@@ -105,7 +168,7 @@ function Dashboard() {
                     : 'bg-white border-gray-200 text-gray-900 hover:border-teal-primary hover:bg-teal-primary/5'
                 }`}
               >
-                <span className="text-lg">✓</span>
+                <Check className="w-5 h-5" />
                 <span className="font-medium">I did it</span>
               </button>
               
@@ -117,7 +180,7 @@ function Dashboard() {
                     : 'bg-white border-gray-200 text-gray-900 hover:border-teal-primary hover:bg-teal-primary/5'
                 }`}
               >
-                <span className="text-lg">😊</span>
+                <Minus className="w-5 h-5" />
                 <span className="font-medium">A little bit</span>
               </button>
               
@@ -129,7 +192,7 @@ function Dashboard() {
                     : 'bg-white border-gray-200 text-gray-900 hover:border-teal-primary hover:bg-teal-primary/5'
                 }`}
               >
-                <span className="text-lg">✕</span>
+                <X className="w-5 h-5" />
                 <span className="font-medium">Not today</span>
               </button>
             </div>
@@ -159,7 +222,7 @@ function Dashboard() {
                     className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-teal-hover to-teal-primary rounded-full transition-all duration-300 flex items-start justify-center pt-2"
                     style={{ height: `${energyLevel}%` }}
                   >
-                    <span className="text-xl drop-shadow-md">⚡</span>
+                    <Zap className="w-5 h-5 text-white fill-white drop-shadow-md" />
                   </div>
                 </div>
                 
@@ -199,7 +262,7 @@ function Dashboard() {
               className="w-full bg-gray-900 hover:bg-black text-white font-semibold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               Save & Next
-              <span className="text-2xl font-light">›</span>
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>
