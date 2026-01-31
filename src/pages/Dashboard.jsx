@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Target, Check, Minus, X, Zap, ChevronRight, ChevronLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Target, Zap, ChevronRight, ChevronLeft } from 'lucide-react';
 import DashboardNavbar from '../components/DashboardNavbar/DashboardNavbar';
 
 function Dashboard() {
-  const [currentHabitIndex, setCurrentHabitIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState('did-it');
+  const navigate = useNavigate();
+  const [currentFocusIndex, setCurrentFocusIndex] = useState(0);
   const [reflection, setReflection] = useState('');
   const [energyLevel, setEnergyLevel] = useState(64);
 
@@ -18,50 +19,75 @@ function Dashboard() {
     return "Good evening";
   };
 
-  const todayHabits = [
+  // User's custom habits (will come from Supabase)
+  const userHabits = [
     {
+      id: 'user-1',
+      title: "Practice Guitar",
+      description: "Spend 20 minutes practicing scales and learning new songs.",
+    },
+    {
+      id: 'user-2',
+      title: "Call a Friend",
+      description: "Connect with someone meaningful and nurture your relationships.",
+    },
+    {
+      id: 'user-3',
+      title: "Code Review",
+      description: "Review and improve code quality for 30 minutes.",
+    }
+  ];
+
+  // Basic starter habits (default recommendations)
+  const starterHabits = [
+    {
+      id: 'starter-1',
       title: "Morning Meditation",
       description: "10 minutes of mindfulness to center your thoughts and set an intention for the day ahead.",
     },
     {
+      id: 'starter-2',
       title: "Exercise",
       description: "30 minutes of physical activity to energize your body and boost your mood.",
     },
     {
+      id: 'starter-3',
       title: "Read for 20 minutes",
       description: "Expand your knowledge and stimulate your mind with focused reading time.",
     },
     {
+      id: 'starter-4',
       title: "Drink 8 glasses of water",
       description: "Stay hydrated throughout the day to maintain energy and focus.",
     },
     {
+      id: 'starter-5',
       title: "Journal before bed",
       description: "Reflect on your day and process your thoughts through writing.",
     }
   ];
 
-  const currentHabit = todayHabits[currentHabitIndex];
+  const allHabits = [...userHabits, ...starterHabits];
+  const currentFocusHabit = allHabits[currentFocusIndex];
 
-  const handlePreviousHabit = () => {
-    setCurrentHabitIndex((prev) => (prev > 0 ? prev - 1 : todayHabits.length - 1));
+  const handleHabitClick = () => {
+    navigate('/habits');
   };
 
-  const handleNextHabit = () => {
-    setCurrentHabitIndex((prev) => (prev < todayHabits.length - 1 ? prev + 1 : 0));
+  const handlePreviousFocus = () => {
+    setCurrentFocusIndex((prev) => (prev > 0 ? prev - 1 : allHabits.length - 1));
+  };
+
+  const handleNextFocus = () => {
+    setCurrentFocusIndex((prev) => (prev < allHabits.length - 1 ? prev + 1 : 0));
   };
 
   const dailyProgress = {
     completed: 3,
-    total: 8
+    total: allHabits.length
   };
 
   const progressPercentage = (dailyProgress.completed / dailyProgress.total) * 100;
-
-  const handleSaveNext = () => {
-    console.log('Saving:', { selectedOption, reflection, energyLevel });
-    // TODO: Save to Supabase
-  };
 
   return (
     <div className="min-h-screen bg-cream">
@@ -80,93 +106,107 @@ function Dashboard() {
 
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Current Focus Card - Takes 2 columns */}
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-md p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-teal-primary" />
-                <h3 className="text-xs font-semibold tracking-wider text-teal-primary uppercase">
-                  Today's Focus Habits
+          {/* Main Content - All Personalized Habits */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* User's Personalized Habits */}
+            <div className="bg-white rounded-2xl shadow-md p-6">
+              <div className="flex items-center gap-2 mb-6">
+                <Target className="w-5 h-5 text-teal-primary" />
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Your Personalized Habits
                 </h3>
               </div>
-              <div className="text-xs text-gray-500 font-medium">
-                {currentHabitIndex + 1} / {todayHabits.length}
-              </div>
-            </div>
-            
-            <div className="mb-8 relative">
-              {/* Navigation Arrows */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 flex gap-2">
-                <button
-                  onClick={handlePreviousHabit}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
-                  aria-label="Previous habit"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-              </div>
-              
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex gap-2">
-                <button
-                  onClick={handleNextHabit}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
-                  aria-label="Next habit"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
-              </div>
 
-              <div className="px-12">
-                <h2 className="text-3xl font-semibold text-gray-900 mb-3">
-                  {currentHabit.title}
-                </h2>
-                <p className="text-gray-600 leading-relaxed">
-                  {currentHabit.description}
-                </p>
+              <div className="space-y-4">
+                {userHabits.map((habit) => (
+                  <div
+                    key={habit.id}
+                    onClick={handleHabitClick}
+                    className="p-5 rounded-xl border-2 border-gray-200 hover:border-teal-primary hover:bg-teal-primary/5 transition-all cursor-pointer"
+                  >
+                    <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                      {habit.title}
+                    </h4>
+                    <p className="text-gray-600 text-sm">
+                      {habit.description}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Check-in Options */}
-            <div className="space-y-4">
-              <h4 className="text-xs font-semibold tracking-wider text-gray-900 uppercase mb-3">
-                How did it go?
-              </h4>
+            {/* Starter Habits (Basic Recommendations) */}
+            <div className="bg-white rounded-2xl shadow-md p-6">
+              <div className="flex items-center gap-2 mb-6">
+                <Zap className="w-5 h-5 text-gray-500" />
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Recommended Starter Habits
+                </h3>
+              </div>
+
+              <div className="space-y-4">
+                {starterHabits.map((habit) => (
+                  <div
+                    key={habit.id}
+                    onClick={handleHabitClick}
+                    className="p-5 rounded-xl border-2 border-gray-200 hover:border-teal-primary hover:bg-teal-primary/5 transition-all cursor-pointer"
+                  >
+                    <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                      {habit.title}
+                    </h4>
+                    <p className="text-gray-600 text-sm">
+                      {habit.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Today's Focus Habit - Moved Down */}
+            <div className="bg-white rounded-2xl shadow-md p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-teal-primary" />
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Today's Focus
+                  </h3>
+                </div>
+                <div className="text-xs text-gray-500 font-medium">
+                  {currentFocusIndex + 1} / {allHabits.length}
+                </div>
+              </div>
               
-              <button
-                onClick={() => setSelectedOption('did-it')}
-                className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
-                  selectedOption === 'did-it'
-                    ? 'bg-teal-primary border-teal-primary text-white'
-                    : 'bg-white border-gray-200 text-gray-900 hover:border-teal-primary hover:bg-teal-primary/5'
-                }`}
-              >
-                <Check className="w-5 h-5" />
-                <span className="font-medium">I did it</span>
-              </button>
-              
-              <button
-                onClick={() => setSelectedOption('little-bit')}
-                className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
-                  selectedOption === 'little-bit'
-                    ? 'bg-teal-primary border-teal-primary text-white'
-                    : 'bg-white border-gray-200 text-gray-900 hover:border-teal-primary hover:bg-teal-primary/5'
-                }`}
-              >
-                <Minus className="w-5 h-5" />
-                <span className="font-medium">A little bit</span>
-              </button>
-              
-              <button
-                onClick={() => setSelectedOption('not-today')}
-                className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
-                  selectedOption === 'not-today'
-                    ? 'bg-teal-primary border-teal-primary text-white'
-                    : 'bg-white border-gray-200 text-gray-900 hover:border-teal-primary hover:bg-teal-primary/5'
-                }`}
-              >
-                <X className="w-5 h-5" />
-                <span className="font-medium">Not today</span>
-              </button>
+              <div className="relative">
+                {/* Navigation Arrows */}
+                <div className="absolute -left-2 top-1/2 -translate-y-1/2">
+                  <button
+                    onClick={handlePreviousFocus}
+                    className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
+                    aria-label="Previous focus habit"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                <div className="absolute -right-2 top-1/2 -translate-y-1/2">
+                  <button
+                    onClick={handleNextFocus}
+                    className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
+                    aria-label="Next focus habit"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </div>
+
+                <div className="px-12 text-center">
+                  <h4 className="text-2xl font-semibold text-gray-900 mb-3">
+                    {currentFocusHabit.title}
+                  </h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    {currentFocusHabit.description}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -227,15 +267,6 @@ function Dashboard() {
                 rows={4}
               />
             </div>
-
-            {/* Save Button */}
-            <button
-              onClick={handleSaveNext}
-              className="w-full bg-gray-900 hover:bg-black text-white font-semibold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
-            >
-              Save & Next
-              <ChevronRight className="w-5 h-5" />
-            </button>
           </div>
         </div>
 
@@ -267,13 +298,6 @@ function Dashboard() {
           </p>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-6 mt-12">
-        <div className="max-w-7xl mx-auto px-6 text-center text-sm text-gray-500">
-          © 2024 HabitReflect • Your sustainable growth companion
-        </div>
-      </footer>
     </div>
   );
 }
