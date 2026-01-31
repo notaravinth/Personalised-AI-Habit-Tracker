@@ -5,6 +5,7 @@ import SignUpPage from './pages/SignUpPage/SignUpPage'
 import SignInPage from './pages/SignInPage/SignInPage'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
 import Dashboard from './pages/Dashboard'
+import HabitsPage from './pages/HabitsPage/HabitsPage'
 import './App.css'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/habits" element={<HabitsPage />} />
         </Routes>
       </Router>
     </AuthProvider>
